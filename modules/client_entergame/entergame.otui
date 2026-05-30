@@ -83,7 +83,7 @@ RookLink < UIButton
 // ============================================================
 UIWidget
   id: enterGame
-  size: 320 300
+  size: 320 260
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
   background-color: alpha
@@ -99,10 +99,10 @@ UIWidget
 
   RookFieldBg
     id: emailBg
-    anchors.left: parent.left
-    anchors.right: parent.right
+    width: 260
+    anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: emailLabel.bottom
-    margin-top: 6
+    margin-top: 8
 
   // saved-accounts arrow — far left
   UIButton
@@ -159,14 +159,14 @@ UIWidget
     text: PASSWORD
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: emailBg.bottom
-    margin-top: 16
+    margin-top: 20
 
   RookFieldBg
     id: passwordBg
-    anchors.left: parent.left
-    anchors.right: parent.right
+    width: 260
+    anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: passwordLabel.bottom
-    margin-top: 6
+    margin-top: 8
 
   // eye toggle (hide/show password) — flush right
   RookEye
@@ -202,7 +202,7 @@ UIWidget
     text-auto-resize: true
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: passwordBg.bottom
-    margin-top: 20
+    margin-top: 32
     @onCheckChange: |
       self:getParent():getChildById('autoLoginBox'):setEnabled(self:isChecked())
       self:getParent():getChildById('rememberEmailTip'):setOn(self:isChecked())
@@ -220,8 +220,8 @@ UIWidget
     !text: tr('Login')
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: rememberEmailBox.bottom
-    width: 220
-    margin-top: 16
+    width: 200
+    margin-top: 28
     @onClick: EnterGame.doLogin()
 
   // ---------- FORGOT PASSWORD ----------
