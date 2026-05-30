@@ -145,15 +145,9 @@ local function onUpdateNeeded(protocol, signature)
 end
 
 local function updateLabelText()
-    if enterGame:getChildById('clientComboBox') and tonumber(enterGame:getChildById('clientComboBox'):getText()) > 1080 then
-        enterGame:setText("Journey Onwards")
-        enterGame:getChildById('emailLabel'):setText("Email:")
-        enterGame:getChildById('rememberEmailBox'):setText("Remember Email:")
-    else
-        enterGame:setText("Enter Game")
-        enterGame:getChildById('emailLabel'):setText("Acc Name:")
-        enterGame:getChildById('rememberEmailBox'):setText("Remember password:")
-    end
+    enterGame:getChildById('emailLabel'):setText("E-MAIL")
+    enterGame:getChildById('passwordLabel'):setText("PASSWORD")
+    enterGame:getChildById('rememberEmailBox'):setText("Remember Me")
 end
 
 local function loadServerListModule()
@@ -928,15 +922,12 @@ function EnterGame.setUniqueServer(host, port, protocol, windowWidth, windowHeig
     local rememberEmailBox = enterGame:getChildById('rememberEmailBox')
     rememberEmailBox:setMarginTop(5)
 
-    if not windowWidth then
-        windowWidth = 380
+    if windowWidth then
+        enterGame:setWidth(windowWidth)
     end
-    enterGame:setWidth(windowWidth)
-    if not windowHeight then
-        windowHeight = 229
+    if windowHeight then
+        enterGame:setHeight(windowHeight)
     end
-
-    enterGame:setHeight(windowHeight)
     enterGame.disableToken = true
     local server = Servers_init[host]
     enterGame.disableToken = not (server and server.useAuthenticator)
