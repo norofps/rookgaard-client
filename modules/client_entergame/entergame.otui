@@ -1,47 +1,84 @@
 // ============================================================
-// Rookgaard Login Screen
-// Flat layout over wallpaper — no window, no drag
+// Rookgaard Login Screen — clean flat layout over wallpaper
 // ============================================================
 
-// Custom styles (scoped to this file)
+// Smooth TTF label with dark outline for contrast on any background
 RookLabel < Label
-  font: Verdana Bold-13px
-  color: #ffffffdd
+  ttf-font: verdana-bold
+  ttf-font-size: 13
+  ttf-stroke-width: 1
+  ttf-stroke-color: #000000ff
+  color: #ffffffff
   text-auto-resize: true
   background-color: alpha
 
-RookInput < TextQtEdit
-  height: 32
-  color: #e0e0e0ff
-  font: verdana-11px-antialised
-  background-color: #111111cc
-  padding-left: 10
-  padding-right: 32
-
-RookButton < UIButton
+// Clean input field: dark translucent, subtle border, smooth text
+RookInput < UITextEdit
   height: 34
-  font: Verdana Bold-13px
-  color: #ffffffee
-  background-color: #111111bb
+  color: #ffffffff
+  ttf-font: verdana-bold
+  ttf-font-size: 11
+  text-align: left
+  background-color: #0a0a0abb
   border-width: 1
-  border-color: #888888aa
+  border-color: #ffffff33
+  padding-left: 14
+  padding-right: 40
+  padding-top: 10
+  cursor: none
+  selection-color: #ffffff
+  selection-background-color: #555555
+
+// Transparent eye toggle (no button background)
+RookEye < UICheckBox
+  size: 19 20
+  image-source: /images/ui/rook_eye
+  image-color: #b0b0b0ff
+  background-color: alpha
+  change-cursor-image: true
+  cursor: pointer
+  $hover:
+    image-color: #ffffffff
+
+// Bordered login button with a subtle golden frame
+RookButton < UIButton
+  height: 38
+  ttf-font: verdana-bold
+  ttf-font-size: 14
+  ttf-stroke-width: 1
+  ttf-stroke-color: #000000aa
+  color: #ffffffff
+  background-color: #000000bb
+  border-width: 1
+  border-color: #c2a35ccc
   text-align: center
   change-cursor-image: true
   cursor: pointer
-
   $hover:
-    background-color: #222222cc
-    border-color: #aaaaaacc
-
+    background-color: #1a1a1add
+    border-color: #e6c87aff
   $pressed:
-    background-color: #333333cc
+    background-color: #2a2a2add
+
+// Smooth small underlined link
+RookLink < UIButton
+  ttf-font: verdana-bold
+  ttf-font-size: 10
+  color: #b8b8b8ff
+  text-align: center
+  background-color: alpha
+  text-auto-resize: true
+  change-cursor-image: true
+  cursor: pointer
+  $hover:
+    color: #ffffffff
 
 // ============================================================
 // Main container — centered, fully transparent
 // ============================================================
 UIWidget
   id: enterGame
-  size: 300 295
+  size: 320 300
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
   background-color: alpha
@@ -57,21 +94,22 @@ UIWidget
 
   RookInput
     id: accountNameTextEdit
-    padding-left: 30
+    padding-left: 36
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: emailLabel.bottom
-    margin-top: 4
+    margin-top: 6
 
-    // dropdown arrow (saved accounts) — left
+    // dropdown arrow (saved accounts) — left, before text starts
     UIButton
       id: savedAccountsButton
-      size: 16 16
+      size: 9 9
       anchors.left: parent.left
       anchors.verticalCenter: parent.verticalCenter
-      margin-left: 8
+      margin-left: 13
       image-source: /images/ui/icon-arrow7x7-down
-      image-color: #aaaaaaff
+      image-color: #b0b0b0ff
+      background-color: alpha
       change-cursor-image: true
       cursor: pointer
       $hover:
@@ -79,14 +117,11 @@ UIWidget
       @onClick: EnterGame.showSavedAccounts()
 
     // eye toggle (hide/show email) — right
-    UICheckBox
-      size: 19 20
+    RookEye
       anchors.right: parent.right
-      margin-right: 6
+      margin-right: 10
       anchors.verticalCenter: parent.verticalCenter
-      image-source: /images/ui/hide_eye
-      @onCheckChange: |
-        self:getParent():setTextHidden(self:isChecked())
+      @onCheckChange: self:getParent():setTextHidden(self:isChecked())
       $!checked:
         image-clip: 0 0 19 20
       $checked:
@@ -98,26 +133,22 @@ UIWidget
     text: PASSWORD
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: accountNameTextEdit.bottom
-    margin-top: 16
+    margin-top: 18
 
-  // Password input with eye-toggle (text hidden by default)
   RookInput
     id: accountPasswordTextEdit
     text-hidden: true
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: passwordLabel.bottom
-    margin-top: 4
+    margin-top: 6
 
-    UICheckBox
-      size: 19 20
+    // eye toggle (hide/show password) — right
+    RookEye
       anchors.right: parent.right
-      margin-right: 6
+      margin-right: 10
       anchors.verticalCenter: parent.verticalCenter
-      image-source: /images/ui/hide_eye
-      phantom: false
-      @onCheckChange: |
-        self:getParent():setTextHidden(not self:isChecked())
+      @onCheckChange: self:getParent():setTextHidden(not self:isChecked())
       $!checked:
         image-clip: 0 0 19 20
       $checked:
@@ -127,12 +158,13 @@ UIWidget
   QtCheckBox
     id: rememberEmailBox
     !text: tr('Remember Me')
-    color: #c0c0c0dd
-    font: verdana-11px-antialised
+    ttf-font: verdana-bold
+    ttf-font-size: 10
+    color: #d0d0d0ff
     text-auto-resize: true
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: accountPasswordTextEdit.bottom
-    margin-top: 14
+    margin-top: 18
     @onCheckChange: |
       self:getParent():getChildById('autoLoginBox'):setEnabled(self:isChecked())
       self:getParent():getChildById('rememberEmailTip'):setOn(self:isChecked())
@@ -150,25 +182,18 @@ UIWidget
     !text: tr('Login')
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: rememberEmailBox.bottom
-    width: 200
-    margin-top: 14
+    width: 220
+    margin-top: 16
     @onClick: EnterGame.doLogin()
 
   // --- FORGOT PASSWORD ---
-  UIButton
+  RookLink
     id: Forgot_password_email
     !text: tr('Forgot password')
-    font: verdana-11px-monochrome-underline
-    color: #a0a0a0cc
-    text-align: center
-    background-color: alpha
-    text-auto-resize: true
     visible: false
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: prev.bottom
-    margin-top: 10
-    change-cursor-image: true
-    cursor: pointer
+    margin-top: 12
     @onClick: g_platform.openUrl(Services.websites)
     @onSetup: |
       if Services and Services.websites then
@@ -178,20 +203,13 @@ UIWidget
       end
 
   // --- CREATE ACCOUNT ---
-  UIButton
+  RookLink
     id: btnCreateNewAccount
     !text: tr('Create Account')
-    font: verdana-11px-monochrome-underline
-    color: #a0a0a0cc
-    text-align: center
-    background-color: alpha
-    text-auto-resize: true
     visible: false
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: prev.bottom
-    margin-top: 6
-    change-cursor-image: true
-    cursor: pointer
+    margin-top: 7
     @onClick: |
       self:disable()
       createWidgetAccount()
@@ -205,9 +223,9 @@ UIWidget
   Label
     id: serverInfoLabel
     font: verdana-11px-rounded
-    anchors.left: parent.left
+    anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: prev.bottom
-    margin-top: 4
+    margin-top: 6
     color: #00dd00
     text-auto-resize: true
 
