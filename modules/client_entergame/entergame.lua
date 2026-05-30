@@ -978,8 +978,9 @@ function EnterGame.setUniqueServer(host, port, protocol, windowWidth, windowHeig
     serverListButton:setHeight(0)
     serverListButton:setWidth(0)
 
-    local rememberEmailBox = enterGame:getChildById('rememberEmailBox')
-    rememberEmailBox:setMarginTop(5)
+    -- NOTE: do not reposition rememberEmailBox here; its placement is
+    -- defined in entergame.otui (the old single-server layout forced a
+    -- 5px margin that fought our design)
 
     if windowWidth then
         enterGame:setWidth(windowWidth)
