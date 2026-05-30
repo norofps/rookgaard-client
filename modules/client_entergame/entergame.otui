@@ -198,11 +198,13 @@ UIWidget
     ttf-stroke-width: 1
     ttf-stroke-color: #000000ff
     color: #ffffffff
-    text-offset: 20 0
-    text-auto-resize: true
+    width: 116
+    height: 16
+    text-offset: 22 1
+    text-align: left
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: passwordBg.bottom
-    margin-top: 32
+    margin-top: 34
     @onCheckChange: |
       self:getParent():getChildById('autoLoginBox'):setEnabled(self:isChecked())
       self:getParent():getChildById('rememberEmailTip'):setOn(self:isChecked())

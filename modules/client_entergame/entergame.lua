@@ -547,6 +547,14 @@ function EnterGame.show()
     enterGame:show()
     enterGame:raise()
     enterGame:focus()
+
+    -- Always land on the email field first (password edit otherwise
+    -- grabs focus because it is created last)
+    local emailEdit = enterGame:getChildById('accountNameTextEdit')
+    if emailEdit then
+        emailEdit:focus()
+    end
+
     hasAttemptedAuthenticator = false
 end
 
