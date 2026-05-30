@@ -83,7 +83,7 @@ RookLink < UIButton
 // ============================================================
 UIWidget
   id: enterGame
-  size: 320 260
+  size: 320 270
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
   background-color: alpha
@@ -204,7 +204,7 @@ UIWidget
     text-align: left
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: passwordBg.bottom
-    margin-top: 34
+    margin-top: 38
     @onCheckChange: |
       self:getParent():getChildById('autoLoginBox'):setEnabled(self:isChecked())
       self:getParent():getChildById('rememberEmailTip'):setOn(self:isChecked())
@@ -221,9 +221,9 @@ UIWidget
   RookButton
     !text: tr('Login')
     anchors.horizontalCenter: parent.horizontalCenter
-    anchors.top: rememberEmailBox.bottom
+    anchors.top: passwordBg.bottom
     width: 200
-    margin-top: 28
+    margin-top: 92
     @onClick: EnterGame.doLogin()
 
   // ---------- FORGOT PASSWORD ----------
