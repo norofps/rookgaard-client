@@ -297,6 +297,12 @@ function EnterGame.init()
     if g_app.isRunning() and not g_game.isOnline() then
         enterGame:show()
     end
+
+    -- Hide the default top/bottom menus on the initial login screen.
+    -- Deferred so the menu modules are guaranteed to be loaded.
+    addEvent(function()
+        EnterGame.hideLoginClutter()
+    end)
 end
 
 function EnterGame.hidePanels()
@@ -307,10 +313,23 @@ function EnterGame.hidePanels()
 end
 
 function EnterGame.showPanels()
-    if g_modules.getModule("client_bottommenu"):isLoaded()  then
-        modules.client_bottommenu.show()
+    -- Keep the login screen clean: top/bottom menus stay hidden here.
+    -- (They are managed normally once in-game.)
+    EnterGame.hideLoginClutter()
+end
+
+-- Hides the default OTClient top bar (Discord/YouTube/players online)
+-- and the bottom panels (hints/events/boosted + big title) while the
+-- login screen is shown. To be redesigned later.
+function EnterGame.hideLoginClutter()
+    local bottom = g_modules.getModule("client_bottommenu")
+    if bottom and bottom:isLoaded() then
+        modules.client_bottommenu.hide()
     end
-    modules.client_topmenu.show()
+    local top = g_modules.getModule("client_topmenu")
+    if top and top:isLoaded() then
+        modules.client_topmenu.hide()
+    end
 end
 
 function EnterGame.showServerList()
@@ -554,6 +573,8 @@ function EnterGame.show()
     if emailEdit then
         emailEdit:focus()
     end
+
+    EnterGame.hideLoginClutter()
 
     hasAttemptedAuthenticator = false
 end

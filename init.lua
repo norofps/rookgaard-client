@@ -32,7 +32,7 @@ Servers_init = {
     }
 }
 
-g_app.setName("OTClient - Redemption");
+g_app.setName("Irongaard");
 g_app.setCompactName("otclient");
 g_app.setOrganizationName("otcr");
 
