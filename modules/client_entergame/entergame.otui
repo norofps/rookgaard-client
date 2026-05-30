@@ -86,6 +86,7 @@ UIWidget
   size: 320 240
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
+  margin-top: 80
   background-color: alpha
   focusable: true
   @onEnter: EnterGame.doLogin()
