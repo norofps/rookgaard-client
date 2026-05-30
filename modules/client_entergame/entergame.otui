@@ -45,6 +45,20 @@ RookEye < UICheckBox
   $hover:
     image-color: #ffffffff
 
+// Gold checkbox (transparent bg) — matches the IRONGAARD palette
+RookCheck < UICheckBox
+  size: 16 16
+  image-source: /images/ui/rook_checkbox
+  image-rect: 0 0 16 16
+  background-color: alpha
+  text-align: left
+  change-cursor-image: true
+  cursor: pointer
+  $!checked:
+    image-clip: 0 0 16 16
+  $checked:
+    image-clip: 0 16 16 16
+
 // Bordered login button with a subtle golden frame
 RookButton < UIButton
   height: 38
@@ -191,7 +205,7 @@ UIWidget
     margin-right: 6
 
   // ---------- REMEMBER ME ----------
-  QtCheckBox
+  RookCheck
     id: rememberEmailBox
     !text: tr('REMEMBER ME')
     ttf-font: verdana-bold
@@ -201,7 +215,7 @@ UIWidget
     color: #ffffffff
     width: 116
     height: 16
-    text-offset: 22 1
+    text-offset: 24 2
     text-align: left
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: passwordBg.bottom
