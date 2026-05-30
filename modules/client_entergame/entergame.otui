@@ -29,6 +29,7 @@ RookTextEdit < UITextEdit
   ttf-font-size: 11
   text-align: left
   background-color: alpha
+  clipping: true
   cursor: none
   selection-color: #ffffff
   selection-background-color: #555555
