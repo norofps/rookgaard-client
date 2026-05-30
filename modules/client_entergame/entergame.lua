@@ -66,6 +66,9 @@ local function onSessionKey(protocol, sessionKey)
 end
 
 local function onCharacterList(protocol, characters, account, otui)
+    -- Remember this account in the saved-accounts dropdown
+    EnterGame.addSavedAccount(G.account, G.password)
+
     local httpLogin = enterGame:getChildById('httpLoginBox'):isChecked()
 
     -- Try add server to the server list
@@ -568,6 +571,54 @@ end
 
 function EnterGame.setPassword(password)
     enterGame:getChildById('accountPasswordTextEdit'):setText(safeDecrypt(password or ''))
+end
+
+-- Saved accounts dropdown (left arrow in the email field)
+-- Stores every account that successfully logged in on this machine.
+function EnterGame.addSavedAccount(account, password)
+    if not account or account == '' then
+        return
+    end
+    local list = g_settings.getNode('rookSavedAccounts') or {}
+    local encAccount = g_crypt.encrypt(account)
+    local encPassword = g_crypt.encrypt(password or '')
+    local found = false
+    for _, entry in ipairs(list) do
+        if safeDecrypt(entry.account) == account then
+            entry.password = encPassword
+            found = true
+            break
+        end
+    end
+    if not found then
+        table.insert(list, { account = encAccount, password = encPassword })
+    end
+    g_settings.setNode('rookSavedAccounts', list)
+    g_settings.save()
+end
+
+function EnterGame.showSavedAccounts()
+    local list = g_settings.getNode('rookSavedAccounts') or {}
+    if #list == 0 then
+        return
+    end
+
+    local menu = g_ui.createWidget('PopupMenu')
+    menu:setGameMenu(true)
+    for _, entry in ipairs(list) do
+        local account = safeDecrypt(entry.account)
+        if account and account ~= '' then
+            menu:addOption(account, function()
+                EnterGame.setAccountName(entry.account)
+                EnterGame.setPassword(entry.password)
+            end)
+        end
+    end
+
+    local button = enterGame:getChildById('accountNameTextEdit'):getChildById('savedAccountsButton')
+    local pos = button:getPosition()
+    pos.y = pos.y + button:getHeight()
+    menu:display(pos)
 end
 
 function EnterGame.setHttpLogin(httpLogin)
