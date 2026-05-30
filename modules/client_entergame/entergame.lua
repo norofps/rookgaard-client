@@ -150,7 +150,7 @@ end
 local function updateLabelText()
     enterGame:getChildById('emailLabel'):setText("E-MAIL")
     enterGame:getChildById('passwordLabel'):setText("PASSWORD")
-    enterGame:getChildById('rememberEmailBox'):setText("Remember Me")
+    enterGame:getChildById('rememberEmailBox'):setText("REMEMBER ME")
 end
 
 local function loadServerListModule()
