@@ -71,23 +71,12 @@ function init()
 
     installLocales('/locales')
 
-    local userLocaleName = g_settings.get('locale', 'false')
-    if userLocaleName ~= 'false' and setLocale(userLocaleName) then
-        pdebug('Using configured locale: ' .. userLocaleName)
-    else
-        setLocale(defaultLocaleName)
-        if g_app.hasUpdater() then
-            connect(g_app, {
-                onUpdateFinished = createWindow,
-            })
-        else
-            connect(g_app, {
-                onRun = createWindow,
-            })
-        end
-    end
+    -- Irongaard: the client is English-only. Always force the English
+    -- locale, ignore any previously saved locale, never show the
+    -- language picker, and don't let the server switch the language.
+    setLocale(defaultLocaleName)
+    g_settings.set('locale', defaultLocaleName)
 
-    ProtocolGame.registerExtendedOpcode(ExtendedIds.Locale, onExtendedLocales)
     connect(g_game, {
         onGameStart = onGameStart
     })
