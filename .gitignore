@@ -332,3 +332,6 @@ android/app/.cxx/
 android/.gradle/
 android/build/
 luajit-src/
+
+# Game assets (too large for git - copy manually from the Tibia client)
+data/things/1524/
