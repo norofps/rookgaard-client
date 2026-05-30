@@ -615,7 +615,7 @@ function EnterGame.showSavedAccounts()
         end
     end
 
-    local button = enterGame:getChildById('accountNameTextEdit'):getChildById('savedAccountsButton')
+    local button = enterGame:getChildById('savedAccountsButton')
     local pos = button:getPosition()
     pos.y = pos.y + button:getHeight()
     menu:display(pos)
