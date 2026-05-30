@@ -215,7 +215,7 @@ UIWidget
     color: #ffffffff
     width: 116
     height: 16
-    text-offset: 24 2
+    text-offset: 22 0
     text-align: left
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: passwordBg.bottom
