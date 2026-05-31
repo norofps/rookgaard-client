@@ -21,13 +21,15 @@ Services = {
     }, -- ./client_assets
 }
 
--- Rookgaard Server Configuration
--- IMPORTANTE: Troque "127.0.0.1" pelo IP público do servidor antes de lançar ao público
+-- Irongaard logs in through the server's HTTP login (login.php), exactly
+-- like the official client does. Canary 15.x does not use the old binary
+-- login on port 7171, so we point at the login web service instead.
+-- IMPORTANTE: troque a URL pelo endereço público antes de lançar.
 Servers_init = {
-    ["127.0.0.1"] = {
-        port = 7171,
+    ["http://127.0.0.1/login.php"] = {
+        port = 80,
         protocol = 1524,  -- Tibia 15.24
-        httpLogin = false,
+        httpLogin = true,
         useAuthenticator = false
     }
 }
