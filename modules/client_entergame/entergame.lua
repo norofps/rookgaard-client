@@ -632,30 +632,54 @@ end
 
 -- Saved accounts dropdown (left arrow in the email field)
 -- Stores every account that successfully logged in on this machine.
+-- Saved accounts are persisted as a JSON string (OTML node arrays do not
+-- survive the save/reload round-trip reliably).
+local function loadSavedAccounts()
+    local raw = g_settings.getString('rookSavedAccounts')
+    if not raw or raw == '' then
+        return {}
+    end
+    local ok, list = pcall(function() return json.decode(raw) end)
+    if ok and type(list) == 'table' then
+        return list
+    end
+    return {}
+end
+
+local function storeSavedAccounts(list)
+    g_settings.set('rookSavedAccounts', json.encode(list))
+    g_settings.save()
+end
+
+-- "lehgillies@gmail.com" -> "le*********@gmail.com"
+local function maskEmail(email)
+    local user, domain = email:match('^([^@]+)(@.+)$')
+    if not user then
+        return email
+    end
+    local keep = user:sub(1, 2)
+    return keep .. string.rep('*', math.max(#user - 2, 1)) .. domain
+end
+
 function EnterGame.addSavedAccount(account, password)
     if not account or account == '' then
         return
     end
-    local list = g_settings.getNode('rookSavedAccounts') or {}
-    local encAccount = g_crypt.encrypt(account)
+    local list = loadSavedAccounts()
     local encPassword = g_crypt.encrypt(password or '')
-    local found = false
     for _, entry in ipairs(list) do
         if safeDecrypt(entry.account) == account then
             entry.password = encPassword
-            found = true
-            break
+            storeSavedAccounts(list)
+            return
         end
     end
-    if not found then
-        table.insert(list, { account = encAccount, password = encPassword })
-    end
-    g_settings.setNode('rookSavedAccounts', list)
-    g_settings.save()
+    table.insert(list, { account = g_crypt.encrypt(account), password = encPassword })
+    storeSavedAccounts(list)
 end
 
 function EnterGame.showSavedAccounts()
-    local list = g_settings.getNode('rookSavedAccounts') or {}
+    local list = loadSavedAccounts()
     if #list == 0 then
         return
     end
@@ -665,7 +689,7 @@ function EnterGame.showSavedAccounts()
     for _, entry in ipairs(list) do
         local account = safeDecrypt(entry.account)
         if account and account ~= '' then
-            menu:addOption(account, function()
+            menu:addOption(maskEmail(account), function()
                 EnterGame.setAccountName(entry.account)
                 EnterGame.setPassword(entry.password)
             end)
