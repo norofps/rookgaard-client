@@ -164,6 +164,19 @@ end
 -- public functions
 function EnterGame.init()
     enterGame = g_ui.displayUI('entergame')
+
+    -- Keyboard UX on the login form:
+    --  - Tab moves between the email and password fields
+    --  - Enter (from either field) submits the login
+    local emailEdit = enterGame:getChildById('accountNameTextEdit')
+    local passwordEdit = enterGame:getChildById('accountPasswordTextEdit')
+    if emailEdit and passwordEdit then
+        g_keyboard.bindKeyPress('Tab', function() passwordEdit:focus() end, emailEdit)
+        g_keyboard.bindKeyPress('Tab', function() emailEdit:focus() end, passwordEdit)
+        g_keyboard.bindKeyPress('Enter', function() EnterGame.doLogin() end, emailEdit)
+        g_keyboard.bindKeyPress('Enter', function() EnterGame.doLogin() end, passwordEdit)
+    end
+
     Keybind.new("Misc.", "Change Character", "Ctrl+G", "")
     Keybind.bind("Misc.", "Change Character", {
       {
@@ -874,21 +887,10 @@ function EnterGame.doLogin()
     g_settings.set('port', G.port)
     g_settings.set('client-version', clientVersion)
 
-    if clientVersion >= 1281 and modules.client_assets and modules.client_assets.ensureClientVersion and
-        not modules.client_assets.isClientVersionInstalled(clientVersion) then
-        modules.client_assets.ensureClientVersion(clientVersion, function(success, message)
-            if success then
-                EnterGame.doLogin()
-                return
-            end
-
-            local errorBox = displayErrorBox(tr('Login Error'), message or tr('Unable to download client assets.'))
-            connect(errorBox, {
-                onOk = EnterGame.show
-            })
-        end)
-        return
-    end
+    -- Irongaard: the client always ships with the 15.24 assets bundled
+    -- locally (data/things/1524), so we never prompt to download them.
+    -- (Removed the client_assets auto-download check that triggered the
+    -- "Missing Assets / Download them now?" popup on login.)
 
     EnterGame.hide()
 
