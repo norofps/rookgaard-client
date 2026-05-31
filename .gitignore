@@ -336,3 +336,4 @@ luajit-src/
 # Game assets (too large for git - copy manually from the Tibia client)
 data/things/1524/
 data/images/background_default_backup.png
+data/images/background_irongaard_v1.png
