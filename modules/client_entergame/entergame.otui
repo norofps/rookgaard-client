@@ -210,6 +210,7 @@ UIWidget
   // ---------- REMEMBER ME ----------
   RookCheck
     id: rememberEmailBox
+    focusable: false
     !text: tr('REMEMBER ME')
     ttf-font: verdana-bold
     ttf-font-size: 11
@@ -238,6 +239,7 @@ UIWidget
   // ---------- LOGIN ----------
   RookButton
     text: Login
+    focusable: false
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: passwordBg.bottom
     width: 200
