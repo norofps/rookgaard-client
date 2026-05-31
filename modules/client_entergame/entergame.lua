@@ -171,30 +171,20 @@ function EnterGame.init()
     local emailEdit = enterGame:getChildById('accountNameTextEdit')
     local passwordEdit = enterGame:getChildById('accountPasswordTextEdit')
     if emailEdit and passwordEdit then
-        -- Tab toggles between the fields, handled on KEY_DOWN. The fields
-        -- have shift-navigation:true (in the .otui) which disables
-        -- UITextEdit's native keyPress Tab handler -- otherwise the same
-        -- Tab press would move focus on keyDown and then immediately move
-        -- it back on keyPress, so focus never actually changed.
-        g_keyboard.bindKeyDown('Tab', function() passwordEdit:focus() end, emailEdit)
-        g_keyboard.bindKeyDown('Tab', function() emailEdit:focus() end, passwordEdit)
+        -- Tab toggles between the fields (handled on KEY_DOWN; the fields
+        -- use shift-navigation:true so UITextEdit's native Tab doesn't
+        -- bounce focus back). Cursor lands at the END of the existing text.
+        g_keyboard.bindKeyDown('Tab', function()
+            passwordEdit:focus()
+            passwordEdit:setCursorPos(-1)
+        end, emailEdit)
+        g_keyboard.bindKeyDown('Tab', function()
+            emailEdit:focus()
+            emailEdit:setCursorPos(-1)
+        end, passwordEdit)
 
         g_keyboard.bindKeyPress('Enter', function() EnterGame.doLogin() end, emailEdit)
         g_keyboard.bindKeyPress('Enter', function() EnterGame.doLogin() end, passwordEdit)
-
-        -- Visible focus indicator: the focused field's box border turns
-        -- gold, so Tab movement is obvious.
-        local emailBg = enterGame:getChildById('emailBg')
-        local passwordBg = enterGame:getChildById('passwordBg')
-        local function highlight(bg)
-            return function(_, focused)
-                if bg then
-                    bg:setBorderColor(focused and '#e6c87aff' or '#ffffff33')
-                end
-            end
-        end
-        connect(emailEdit, { onFocusChange = highlight(emailBg) })
-        connect(passwordEdit, { onFocusChange = highlight(passwordBg) })
     end
 
     Keybind.new("Misc.", "Change Character", "Ctrl+G", "")
@@ -690,12 +680,9 @@ function EnterGame.showSavedAccounts()
     end
 
     local menu = g_ui.createWidget('PopupMenu')
-    -- Dark, transparent look with a gold border to match the login theme
-    -- (instead of the default grey OTClient frame).
-    menu:setImageSource('')
-    menu:setBackgroundColor('#0a0a0aee')
-    menu:setBorderWidth(1)
-    menu:setBorderColor('#c2a35ccc')
+    -- Darken the default frame with a safe tint (removing the image with
+    -- setImageSource('') broke the menu entirely).
+    menu:setImageColor('#262626ff')
     menu:setGameMenu(true)
     for _, entry in ipairs(list) do
         local account = safeDecrypt(entry.account)
