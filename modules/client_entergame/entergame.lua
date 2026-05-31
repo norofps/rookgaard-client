@@ -171,9 +171,13 @@ function EnterGame.init()
     local emailEdit = enterGame:getChildById('accountNameTextEdit')
     local passwordEdit = enterGame:getChildById('accountPasswordTextEdit')
     if emailEdit and passwordEdit then
-        -- Tab between fields is handled natively by UITextEdit
-        -- (focusNextChild). Only email/password are focusable in the
-        -- .otui, so Tab strictly toggles between the two.
+        -- Tab toggles between the fields. We bind it on KEY_DOWN directly
+        -- on each field so it fires before the global chat "Next Channel"
+        -- (Tab) keybind, which otherwise consumes the key on keyDown
+        -- before the field's native keyPress focus handling can run.
+        g_keyboard.bindKeyDown('Tab', function() passwordEdit:focus() end, emailEdit)
+        g_keyboard.bindKeyDown('Tab', function() emailEdit:focus() end, passwordEdit)
+
         g_keyboard.bindKeyPress('Enter', function() EnterGame.doLogin() end, emailEdit)
         g_keyboard.bindKeyPress('Enter', function() EnterGame.doLogin() end, passwordEdit)
 
