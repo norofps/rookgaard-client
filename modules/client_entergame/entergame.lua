@@ -171,14 +171,13 @@ function EnterGame.init()
     local emailEdit = enterGame:getChildById('accountNameTextEdit')
     local passwordEdit = enterGame:getChildById('accountPasswordTextEdit')
     if emailEdit and passwordEdit then
-        -- Tab toggles between the fields. We bind it on KEY_DOWN directly
-        -- on each field so it fires before the global chat "Next Channel"
-        -- (Tab) keybind, which otherwise consumes the key on keyDown
-        -- before the field's native keyPress focus handling can run.
-        g_keyboard.bindKeyDown('Tab', function() g_logger.info('[TABDBG] bind fired: email -> password'); passwordEdit:focus() end, emailEdit)
-        g_keyboard.bindKeyDown('Tab', function() g_logger.info('[TABDBG] bind fired: password -> email'); emailEdit:focus() end, passwordEdit)
-        -- TEMP diagnostic: log every key the email field receives on keyDown
-        connect(emailEdit, { onKeyDown = function(_, keyCode) g_logger.info('[TABDBG] email onKeyDown keyCode=' .. tostring(keyCode)) end })
+        -- Tab toggles between the fields, handled on KEY_DOWN. The fields
+        -- have shift-navigation:true (in the .otui) which disables
+        -- UITextEdit's native keyPress Tab handler -- otherwise the same
+        -- Tab press would move focus on keyDown and then immediately move
+        -- it back on keyPress, so focus never actually changed.
+        g_keyboard.bindKeyDown('Tab', function() passwordEdit:focus() end, emailEdit)
+        g_keyboard.bindKeyDown('Tab', function() emailEdit:focus() end, passwordEdit)
 
         g_keyboard.bindKeyPress('Enter', function() EnterGame.doLogin() end, emailEdit)
         g_keyboard.bindKeyPress('Enter', function() EnterGame.doLogin() end, passwordEdit)
