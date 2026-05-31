@@ -175,8 +175,10 @@ function EnterGame.init()
         -- on each field so it fires before the global chat "Next Channel"
         -- (Tab) keybind, which otherwise consumes the key on keyDown
         -- before the field's native keyPress focus handling can run.
-        g_keyboard.bindKeyDown('Tab', function() passwordEdit:focus() end, emailEdit)
-        g_keyboard.bindKeyDown('Tab', function() emailEdit:focus() end, passwordEdit)
+        g_keyboard.bindKeyDown('Tab', function() g_logger.info('[TABDBG] bind fired: email -> password'); passwordEdit:focus() end, emailEdit)
+        g_keyboard.bindKeyDown('Tab', function() g_logger.info('[TABDBG] bind fired: password -> email'); emailEdit:focus() end, passwordEdit)
+        -- TEMP diagnostic: log every key the email field receives on keyDown
+        connect(emailEdit, { onKeyDown = function(_, keyCode) g_logger.info('[TABDBG] email onKeyDown keyCode=' .. tostring(keyCode)) end })
 
         g_keyboard.bindKeyPress('Enter', function() EnterGame.doLogin() end, emailEdit)
         g_keyboard.bindKeyPress('Enter', function() EnterGame.doLogin() end, passwordEdit)
@@ -689,6 +691,12 @@ function EnterGame.showSavedAccounts()
     end
 
     local menu = g_ui.createWidget('PopupMenu')
+    -- Dark, transparent look with a gold border to match the login theme
+    -- (instead of the default grey OTClient frame).
+    menu:setImageSource('')
+    menu:setBackgroundColor('#0a0a0aee')
+    menu:setBorderWidth(1)
+    menu:setBorderColor('#c2a35ccc')
     menu:setGameMenu(true)
     for _, entry in ipairs(list) do
         local account = safeDecrypt(entry.account)
