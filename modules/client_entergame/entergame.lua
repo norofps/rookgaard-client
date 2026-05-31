@@ -171,8 +171,9 @@ function EnterGame.init()
     local emailEdit = enterGame:getChildById('accountNameTextEdit')
     local passwordEdit = enterGame:getChildById('accountPasswordTextEdit')
     if emailEdit and passwordEdit then
-        g_keyboard.bindKeyPress('Tab', function() passwordEdit:focus() end, emailEdit)
-        g_keyboard.bindKeyPress('Tab', function() emailEdit:focus() end, passwordEdit)
+        -- Tab between fields is handled natively by UITextEdit
+        -- (focusNextChild). The arrow/eye widgets are marked
+        -- focusable:false in the .otui so Tab jumps email -> password.
         g_keyboard.bindKeyPress('Enter', function() EnterGame.doLogin() end, emailEdit)
         g_keyboard.bindKeyPress('Enter', function() EnterGame.doLogin() end, passwordEdit)
     end

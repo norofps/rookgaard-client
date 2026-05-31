@@ -123,6 +123,7 @@ UIWidget
   UIButton
     id: savedAccountsButton
     size: 10 10
+    focusable: false
     anchors.left: emailBg.left
     anchors.verticalCenter: emailBg.verticalCenter
     margin-left: 14
@@ -150,6 +151,7 @@ UIWidget
   // eye toggle (hide/show email) — flush right
   RookEye
     id: emailEye
+    focusable: false
     anchors.right: emailBg.right
     anchors.verticalCenter: emailBg.verticalCenter
     margin-right: 8
@@ -186,6 +188,7 @@ UIWidget
   // eye toggle (hide/show password) — flush right
   RookEye
     id: passwordEye
+    focusable: false
     anchors.right: passwordBg.right
     anchors.verticalCenter: passwordBg.verticalCenter
     margin-right: 8
