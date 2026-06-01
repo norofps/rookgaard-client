@@ -631,10 +631,12 @@ end
 -- survive the save/reload round-trip reliably).
 local function loadSavedAccounts()
     local raw = g_settings.getString('rookSavedAccounts')
+    g_logger.info('[ACCDBG] raw=[' .. tostring(raw) .. ']')
     if not raw or raw == '' then
         return {}
     end
     local ok, list = pcall(function() return json.decode(raw) end)
+    g_logger.info('[ACCDBG] decode ok=' .. tostring(ok) .. ' type=' .. type(list))
     if ok and type(list) == 'table' then
         return list
     end
@@ -674,18 +676,19 @@ function EnterGame.addSavedAccount(account, password)
 end
 
 function EnterGame.showSavedAccounts()
+    g_logger.info('[ACCDBG] showSavedAccounts called')
     local list = loadSavedAccounts()
+    g_logger.info('[ACCDBG] list size=' .. tostring(#list))
     if #list == 0 then
         return
     end
 
     local menu = g_ui.createWidget('PopupMenu')
-    -- Darken the default frame with a safe tint (removing the image with
-    -- setImageSource('') broke the menu entirely).
     menu:setImageColor('#262626ff')
     menu:setGameMenu(true)
     for _, entry in ipairs(list) do
         local account = safeDecrypt(entry.account)
+        g_logger.info('[ACCDBG] decrypted=[' .. tostring(account) .. ']')
         if account and account ~= '' then
             menu:addOption(maskEmail(account), function()
                 EnterGame.setAccountName(entry.account)
@@ -693,6 +696,7 @@ function EnterGame.showSavedAccounts()
             end)
         end
     end
+    g_logger.info('[ACCDBG] options added=' .. tostring(menu:getChildCount()))
 
     local button = enterGame:getChildById('savedAccountsButton')
     local pos = button:getPosition()
