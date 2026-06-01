@@ -629,22 +629,30 @@ end
 -- Stores every account that successfully logged in on this machine.
 -- Saved accounts are persisted as a JSON string (OTML node arrays do not
 -- survive the save/reload round-trip reliably).
+-- Stored as individual settings keys (a count + indexed account/password
+-- entries). OTML mangles JSON values that start with '[' or '{' (it reads
+-- them as nodes, so getString returns empty), but plain base64 strings --
+-- exactly what g_crypt.encrypt produces -- round-trip fine, just like the
+-- Remember Me storage.
 local function loadSavedAccounts()
-    local raw = g_settings.getString('rookSavedAccounts')
-    g_logger.info('[ACCDBG] raw=[' .. tostring(raw) .. ']')
-    if not raw or raw == '' then
-        return {}
+    local count = tonumber(g_settings.getString('rookSavedAccountsCount')) or 0
+    local list = {}
+    for i = 1, count do
+        local acc = g_settings.getString('rookSavedAccount' .. i .. '_acc')
+        local pw = g_settings.getString('rookSavedAccount' .. i .. '_pw')
+        if acc and acc ~= '' then
+            table.insert(list, { account = acc, password = pw or '' })
+        end
     end
-    local ok, list = pcall(function() return json.decode(raw) end)
-    g_logger.info('[ACCDBG] decode ok=' .. tostring(ok) .. ' type=' .. type(list))
-    if ok and type(list) == 'table' then
-        return list
-    end
-    return {}
+    return list
 end
 
 local function storeSavedAccounts(list)
-    g_settings.set('rookSavedAccounts', json.encode(list))
+    g_settings.set('rookSavedAccountsCount', #list)
+    for i, entry in ipairs(list) do
+        g_settings.set('rookSavedAccount' .. i .. '_acc', entry.account)
+        g_settings.set('rookSavedAccount' .. i .. '_pw', entry.password)
+    end
     g_settings.save()
 end
 
@@ -676,9 +684,7 @@ function EnterGame.addSavedAccount(account, password)
 end
 
 function EnterGame.showSavedAccounts()
-    g_logger.info('[ACCDBG] showSavedAccounts called')
     local list = loadSavedAccounts()
-    g_logger.info('[ACCDBG] list size=' .. tostring(#list))
     if #list == 0 then
         return
     end
@@ -688,7 +694,6 @@ function EnterGame.showSavedAccounts()
     menu:setGameMenu(true)
     for _, entry in ipairs(list) do
         local account = safeDecrypt(entry.account)
-        g_logger.info('[ACCDBG] decrypted=[' .. tostring(account) .. ']')
         if account and account ~= '' then
             menu:addOption(maskEmail(account), function()
                 EnterGame.setAccountName(entry.account)
@@ -696,7 +701,6 @@ function EnterGame.showSavedAccounts()
             end)
         end
     end
-    g_logger.info('[ACCDBG] options added=' .. tostring(menu:getChildCount()))
 
     local button = enterGame:getChildById('savedAccountsButton')
     local pos = button:getPosition()
